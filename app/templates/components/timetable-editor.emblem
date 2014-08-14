@@ -1,0 +1,5 @@
+ul: each day in sortedTimetables
+  li
+    each timetable in day
+      = time-span-editor timetable=timetable day=day timetables=timetables granulation=granulation
+    button click='addSpan _view.contentIndex' Добавить
