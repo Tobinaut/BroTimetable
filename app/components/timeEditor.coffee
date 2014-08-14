@@ -10,7 +10,7 @@ LOWER_TIME_BOUND = LOWER_TIME_BOUND.toDate()
 App.TimeEditorComponent = Ember.Component.extend
   actions:
     acceptChanges: ->
-      if @get('suggestionList')[@get('currentIndex')] != undefined
+      if @get('suggestionList')[@get('currentIndex')]?
         value = @get('suggestionList')[@get('currentIndex')].text
         current_time = moment(@get('suggestionList')[@get('currentIndex')].text, 'HH:mm')
         current_time.year(2000)
@@ -31,98 +31,132 @@ App.TimeEditorComponent = Ember.Component.extend
 
     pickTime: (time, key) ->
       current_time = moment(time, 'HH:mm')
-      current_time.year(2000)
-      current_time.month(0)
-      current_time.dayOfYear(1)
-      @set('timeInput', time)
+        .year(2000)
+        .month(0)
+        .dayOfYear(1)
+
       @set('time', current_time.toDate())
-      @set('dropdownVisible', false)#set dropdown unvisible
+      @set('dropdownVisible', false)
 
     setDropdownVisible: ->
       @set('dropdownVisible', true)
 
     setDropdownUnVisible: ->
-      @set('dropdownVisible', false)
+      # @set('dropdownVisible', false)
       #не работает PicлTime, так как dropdownListскрывается раньше
       #чем происхоит выбор, нужно фиксить
       # var self = this
       # setTimeout(function() {
       #   self.set('dropdownVisible', false)
       # }, 100)
-  #
-  #suggection list properties
-  #
-  lowerTimeBound: LOWER_TIME_BOUND
-  upperTimeBound: UPPER_TIME_BOUND
-
-  lowerTimeBound: (->
-    timetable = @get('timetable')
-    day = @get('day')
-    if @get('flag') == 'from'
-      if day.objectAt(day.indexOf(timetable) - 1) == undefined
-        LOWER_TIME_BOUND
-      else
-        moment(day.objectAt(day.indexOf(timetable) - 1).close_at).add(@get('granulation'), 'm').toDate()
-    else#to
-      moment(timetable.open_at).add(@get('granulation'), 'm').toDate()
-  ).property('time', 'pickTime', 'dropdownVisible')
-
-  upperTimeBound: (->
-    timetable = @get('timetable')
-    day = @get('day')
-    if @get('flag') == 'to'
-      if day.objectAt(day.indexOf(timetable) + 1) == undefined
-        UPPER_TIME_BOUND
-      else
-        moment(day.objectAt(day.indexOf(timetable) + 1).open_at).toDate()
-    else#from
-      moment(timetable.close_at).toDate()
-
-  ).property('time', 'pickTime', 'dropdownVisible')
-
-  availableTimeValues: (->
-    timeIntervals = []
-    today = moment(@get('lowerTimeBound'))
-    while today.isBefore(moment(@get('upperTimeBound')))
-      timeIntervals.push(moment(today).format('HH:mm'))
-      today = today.add(@get('granulation'), 'm')
-    timeIntervals
-  ).property('lowerTimeBound', 'upperTimeBound')
 
 
-  suggestionList: (->
-    timeInput = @get('timeInput')
-    self = this
-    @get('availableTimeValues')
-    .filter (item, index, enumerable) ->
-      item.indexOf(timeInput) != -1
-    .map (item, index) ->
-      text: item
-      isActive: index == self.get('currentIndex')
-  ).property('timeInput', 'availableTimeValues', 'currentIndex')
-
-  #
-  #input properties
-  #
+  ###
+  # Хитрое свойство для заполнения поля при изменении времени
+  ###
   formattedTime: (->
-    time = moment(@get('time'))
-    time.format('HH:mm')
+    moment(@get('time')).format('HH:mm')
   ).property('time'),
 
   timeInput: Ember.computed.oneWay('formattedTime')
-  #
-  #dropdown properties
-  #
-  dropdownVisible: false
 
+  lowerTimeBound: LOWER_TIME_BOUND
+  upperTimeBound: UPPER_TIME_BOUND
+
+  ###
+  # Нижняя граница для возможного для выбора времени
+  ###
+  lowerTimeBound: (->
+    flag      = @get 'flag'
+    timetable = @get 'timetable'
+    day       = @get 'day'
+
+    if flag is 'from'
+      previous = day.objectAt(day.indexOf(timetable) - 1)
+
+      unless previous?
+        LOWER_TIME_BOUND
+      else
+        moment(previous.get('close_at'))
+          .add(@get('granulation'), 'm')
+          .toDate()
+    else
+      moment(timetable.get('open_at'))
+        .add(@get('granulation'), 'm')
+        .toDate()
+  ).property(
+    'flag',
+    'granulation',
+    'timetable.open_at',
+    'day.@each.open_at',
+    'day.@each.close_at'
+  )
+
+  ###
+  # Верхняя граница для возможного для выбора времени
+  ###
+  upperTimeBound: (->
+    flag      = @get 'flag'
+    timetable = @get 'timetable'
+    day       = @get 'day'
+
+    if flag is 'to'
+      previous = day.objectAt(day.indexOf(timetable) + 1)
+
+      unless previous?
+        UPPER_TIME_BOUND
+      else
+        moment(previous.get('open_at'))
+          .add(@get('granulation'), 'm')
+          .toDate()
+    else
+      moment(timetable.get('close_at'))
+        .add(@get('granulation'), 'm')
+        .toDate()
+  ).property(
+    'flag',
+    'granulation',
+    'timetable.open_at',
+    'day.@each.open_at',
+    'day.@each.close_at'
+  )
+
+  ###
+  # Список возможных временных значений для выбора
+  ###
+  availableTimeValues: (->
+    timeIntervals = []
+    now = moment(@get('lowerTimeBound'))
+    while now.isBefore(moment(@get('upperTimeBound')))
+      timeIntervals.push(moment(now).format('HH:mm'))
+      now = now.add(@get('granulation'), 'm')
+
+    timeIntervals
+  ).property('lowerTimeBound', 'upperTimeBound')
+
+  ###
+  # Список подсказок
+  ###
+  suggestionList: (->
+    timeInput = @get('timeInput')
+
+    @get('availableTimeValues')
+    .filter (item, index, enumerable) =>
+      item.indexOf(timeInput) != -1
+    .map (item, index) =>
+      text: item
+      isActive: index == @get('currentIndex')
+  ).property('timeInput', 'availableTimeValues', 'currentIndex')
+
+  ###
+  # Свойства выпадающего списка подсказок
+  ###
+  dropdownVisible: false
   currentIndex: 0
 
-  # isSelectedTime: (->
-  #  true
-  # ).property('currentIndex'),
-  #
-  #обработка стрелок вверх и вниз
-  #
+  ###
+  # Обработка стрелок вверх и вниз
+  ###
   init: ->
     @_super(arguments...)
     @on("keyUp", @, @interpretKeyEvents)
@@ -142,3 +176,4 @@ App.TimeEditorComponent = Ember.Component.extend
   arrowDown: (event) ->
     if @get('currentIndex') != @get('suggestionList').length - 1
       @set('currentIndex', @get('currentIndex') + 1)
+
