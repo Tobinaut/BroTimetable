@@ -2,12 +2,12 @@ env = require 'config/environment'
 
 if env.get('isDevelopment')
   options =
-    LOG_TRANSITIONS:                true
+    LOG_TRANSITIONS:                false
     LOG_TRANSITIONS_INTERNAL:       false
-    LOG_STACKTRACE_ON_DEPRECATION:  true
-    LOG_BINDINGS:                   true
-    LOG_VIEW_LOOKUPS:               true
-    LOG_ACTIVE_GENERATION:          true
+    LOG_STACKTRACE_ON_DEPRECATION:  false
+    LOG_BINDINGS:                   false
+    LOG_VIEW_LOOKUPS:               false
+    LOG_ACTIVE_GENERATION:          false
 
   Ember.RSVP.configure 'onerror', (error) ->
     if Ember.typeOf(error) is 'object'
@@ -19,7 +19,7 @@ if env.get('isDevelopment')
       Ember.Logger.error 'RSVP Error', error
 
   # Log view render times to the console
-  Ember.STRUCTURED_PROFILE = true
+  Ember.STRUCTURED_PROFILE = false
 
   Ember.Logger.debug(
     "Running in the %c#{env.get('name')}%c environment", 'color: red;', ''

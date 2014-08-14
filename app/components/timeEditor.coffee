@@ -10,18 +10,23 @@ LOWER_TIME_BOUND = LOWER_TIME_BOUND.toDate()
 App.TimeEditorComponent = Ember.Component.extend
   actions:
     acceptChanges: ->
-      if @get('suggestionList')[@get('currentIndex')]?
-        value = @get('suggestionList')[@get('currentIndex')].text
-        current_time = moment(@get('suggestionList')[@get('currentIndex')].text, 'HH:mm')
-        current_time.year(2000)
-        current_time.month(0)
-        current_time.dayOfYear(1)
-        @set('timeInput', current_time.format('HH:mm'))
-        @set('time', current_time.toDate())
-        @set('currentIndex', 0)
+      choice = @get('suggestionList')[@get('currentIndex')]
+
+      if choice?
+        current_time = moment(choice.text, 'HH:mm')
+          .year(2000)
+          .month(0)
+          .dayOfYear(1)
+          .toDate()
+
+        @set 'time', current_time
+        @set 'currentIndex', 0
 
         focusedInput = @$().find('input')
-        inputs = focusedInput.closest('.timetable-editor').find('input[type=text]')
+        inputs = focusedInput
+          .closest('.timetable-editor')
+          .find('input[type=text]')
+
         if inputs.index(focusedInput) == inputs.length - 1
           focusedInput.blur()
         else
@@ -42,13 +47,9 @@ App.TimeEditorComponent = Ember.Component.extend
       @set('dropdownVisible', true)
 
     setDropdownUnVisible: ->
-      # @set('dropdownVisible', false)
-      #не работает PicлTime, так как dropdownListскрывается раньше
-      #чем происхоит выбор, нужно фиксить
-      # var self = this
-      # setTimeout(function() {
-      #   self.set('dropdownVisible', false)
-      # }, 100)
+      setTimeout =>
+        @set('dropdownVisible', false)
+      , 200
 
 
   ###
@@ -56,9 +57,9 @@ App.TimeEditorComponent = Ember.Component.extend
   ###
   formattedTime: (->
     moment(@get('time')).format('HH:mm')
-  ).property('time'),
+  ).property('time')
 
-  timeInput: Ember.computed.oneWay('formattedTime')
+  timeInputBinding: Ember.Binding.oneWay('formattedTime')
 
   lowerTimeBound: LOWER_TIME_BOUND
   upperTimeBound: UPPER_TIME_BOUND
@@ -138,14 +139,15 @@ App.TimeEditorComponent = Ember.Component.extend
   # Список подсказок
   ###
   suggestionList: (->
-    timeInput = @get('timeInput')
+    timeInput    = @get 'timeInput'
+    currentIndex = @get 'currentIndex'
 
-    @get('availableTimeValues')
+    result = @get('availableTimeValues')
     .filter (item, index, enumerable) =>
       item.indexOf(timeInput) != -1
     .map (item, index) =>
       text: item
-      isActive: index == @get('currentIndex')
+      isActive: index is currentIndex
   ).property('timeInput', 'availableTimeValues', 'currentIndex')
 
   ###
