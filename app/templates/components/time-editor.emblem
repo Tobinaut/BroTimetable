@@ -1,7 +1,6 @@
 = input type="text" value=timeInput action="acceptChanges" focus-in="setDropdownVisible" focus-out="setDropdownUnVisible" size="7" arrow-up="arrowUp" arrow-down="arrowDown"
 
-  .dropdownList class=dropdownVisible:visible
-    each s in suggestionList
-      span class=s.isActive:selected click='pickTime s.text'
-        = s.text
-      br
+  .suggestion-list class=dropdownVisible:visible
+    each suggestion in suggestionList
+      .suggestion class=suggestion.isActive:selected click='pickTime suggestion.text'
+        = suggestion.text

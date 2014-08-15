@@ -20,7 +20,6 @@ App.TimeEditorComponent = Ember.Component.extend
           .toDate()
 
         @set 'time', current_time
-        @set 'currentIndex', 0
 
         focusedInput = @$().find('input')
         inputs = focusedInput
@@ -49,7 +48,7 @@ App.TimeEditorComponent = Ember.Component.extend
     setDropdownUnVisible: ->
       setTimeout =>
         @set('dropdownVisible', false)
-      , 200
+      , 100
 
 
   ###
@@ -138,17 +137,22 @@ App.TimeEditorComponent = Ember.Component.extend
   ###
   # Список подсказок
   ###
-  suggestionList: (->
+  suggestionListText: (->
     timeInput    = @get 'timeInput'
     currentIndex = @get 'currentIndex'
 
     result = @get('availableTimeValues')
     .filter (item, index, enumerable) =>
       item.indexOf(timeInput) != -1
-    .map (item, index) =>
+  ).property('timeInput', 'availableTimeValues')
+
+  suggestionList: (->
+    currentIndex = @get('currentIndex')
+
+    @get('suggestionListText').map (item, index) =>
       text: item
       isActive: index is currentIndex
-  ).property('timeInput', 'availableTimeValues', 'currentIndex')
+  ).property('suggestionListText', 'currentIndex')
 
   ###
   # Свойства выпадающего списка подсказок
@@ -157,11 +161,33 @@ App.TimeEditorComponent = Ember.Component.extend
   currentIndex: 0
 
   ###
+  # Автоматическое просколливание в списке подсказок
+  ###
+  currentIndexHasChanged: (->
+    list   = @$('.suggestion-list')
+    entry  = list.find('.suggestion')
+      .eq(@get('currentIndex'))
+
+    offset = entry.position().top
+
+    if offset >= list.innerHeight()
+      list.scrollTop list.scrollTop() + offset - list.innerHeight() + 1.5 * entry.height()
+    else if offset < 0
+      list.scrollTop list.scrollTop() + offset
+
+  ).observes('currentIndex')
+
+
+  suggestionListHasChanged: (->
+    @set('currentIndex', 0)
+  ).observes('suggestionListText')
+
+  ###
   # Обработка стрелок вверх и вниз
   ###
   init: ->
     @_super(arguments...)
-    @on("keyUp", @, @interpretKeyEvents)
+    @on("keyDown", @, @interpretKeyEvents)
 
   interpretKeyEvents: (event) ->
     map = KEY_EVENTS

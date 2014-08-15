@@ -1,13 +1,20 @@
 @import 'nib'
 
 span.selected
-  background-color black
-  color white
 
-.dropdownList
+
+.suggestion-list
   position absolute
+  max-height 196px
   background-color white
-  padding 10px
+  border-radius 3px
   border 1px solid #dedede
+  overflow hidden
+  .suggestion
+    padding 5px 15px
+
+    &.selected
+      background-color #aaa
+      color white
   &:not(.visible)
     display none
