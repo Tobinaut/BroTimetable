@@ -1,7 +1,8 @@
-| с
-= time-editor time=timetable.open_at day=day timetable=timetable flag='from' granulation=granulation
-| по
-= time-editor time=timetable.close_at day=day timetable=timetable flag='to' granulation=granulation
+' с
+= time-editor time=timetable.open_at  day=day timetable=timetable flag='from' granulation=granulation
+'  по
+= time-editor time=timetable.close_at day=day timetable=timetable flag='to'   granulation=granulation
+
 if canBeDeleted
   button click='deleteSpan _view.contentIndex' Удалить
 br

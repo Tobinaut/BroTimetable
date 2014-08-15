@@ -8,49 +8,51 @@ UPPER_TIME_BOUND = UPPER_TIME_BOUND.toDate()
 LOWER_TIME_BOUND = LOWER_TIME_BOUND.toDate()
 
 App.TimeEditorComponent = Ember.Component.extend
-  actions:
-    acceptChanges: ->
-      choice = @get('suggestionList')[@get('currentIndex')]
+  classNames: ['time-editor-component']
 
-      if choice?
-        current_time = moment(choice.text, 'HH:mm')
-          .year(2000)
+  actions:
+    switchFocus: ->
+      focusedInput = @$().find('input')
+      inputs = focusedInput
+        .closest('.timetable-editor')
+        .find('input[type=text]')
+
+      if inputs.index(focusedInput) == inputs.length - 1
+        focusedInput.blur()
+      else
+        inputs.eq(inputs.index(focusedInput) + 1).focus()
+
+    acceptReturn: ->
+      choice = @get('suggestionList').objectAt(@get('currentIndex'))
+      @send('pickTime', choice?.text)
+      @send('switchFocus')
+
+
+    pickTime: (time) ->
+      current_time = moment(time, 'HH:mm')
+
+      if current_time.isValid()
+        current_time = current_time.year(2000)
           .month(0)
           .dayOfYear(1)
           .toDate()
 
         @set 'time', current_time
-
-        focusedInput = @$().find('input')
-        inputs = focusedInput
-          .closest('.timetable-editor')
-          .find('input[type=text]')
-
-        if inputs.index(focusedInput) == inputs.length - 1
-          focusedInput.blur()
-        else
-          inputs.eq( inputs.index(focusedInput)+ 1 ).focus()
       else
-        @set('timeInput', @get('formattedTime'))
+        @notifyPropertyChange('time')
 
-    pickTime: (time, key) ->
-      current_time = moment(time, 'HH:mm')
-        .year(2000)
-        .month(0)
-        .dayOfYear(1)
-
-      @set('time', current_time.toDate())
-      @set('dropdownVisible', false)
 
     setDropdownVisible: ->
       @set('dropdownVisible', true)
 
     setDropdownUnVisible: ->
+      ###
+      # TODO: очень-очень плохо
+      ###
       setTimeout =>
         @set('dropdownVisible', false)
-      , 100
-
-
+        @notifyPropertyChange('time')
+      , 80
   ###
   # Хитрое свойство для заполнения поля при изменении времени
   ###
