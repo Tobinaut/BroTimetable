@@ -50,8 +50,9 @@ App.TimeEditorComponent = Ember.Component.extend
       # TODO: очень-очень плохо
       ###
       setTimeout =>
-        @set('dropdownVisible', false)
-        @notifyPropertyChange('time')
+        unless @get('isDestroyed')
+          @set('dropdownVisible', false)
+          @notifyPropertyChange('time')
       , 80
   ###
   # Хитрое свойство для заполнения поля при изменении времени
