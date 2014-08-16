@@ -16,7 +16,6 @@ App.TimetableEditorComponent = Ember.Component.extend
         is_working: true
       if(moment(today.get('lastObject').close_at).isBefore(moment.parseZone(close_at)))
         @get('timetables').pushObject(newTimetable)
-      console.log(@get('timetables').objectAt(10))
 
   timetables: null
 
