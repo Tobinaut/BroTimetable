@@ -1,7 +1,6 @@
 App.TimeSpanEditorComponent = Ember.Component.extend
   actions:
     deleteSpan: (day) ->
-      console.log 'hey'
       obj = this.get('timetable')
       this.get('timetables').removeObject(obj)
 
