@@ -5,7 +5,6 @@ UPPER_TIME_BOUND.toDate()
 App.TimetableEditorComponent = Ember.Component.extend
   actions:
     addSpan: (day) ->
-      console.log @get('sortedTimetables.length')
       today = @get('sortedTimetables').objectAt(day)
       open_at = moment(today.get('lastObject').close_at).add(this.get('granulation'), 'm')
       close_at = UPPER_TIME_BOUND

@@ -10,6 +10,8 @@ LOWER_TIME_BOUND = LOWER_TIME_BOUND.toDate()
 App.TimeEditorComponent = Ember.Component.extend
   actions:
     acceptChanges: ->
+      console.log @get('lowerTimeBound')
+      console.log @get('upperTimeBound')
       if @get('suggestionList')[@get('currentIndex')] != undefined
         value = @get('suggestionList')[@get('currentIndex')].text
         current_time = moment(@get('suggestionList')[@get('currentIndex')].text, 'HH:mm')
@@ -17,9 +19,9 @@ App.TimeEditorComponent = Ember.Component.extend
         current_time.month(0)
         current_time.dayOfYear(1)
         @set('timeInput', current_time.format('HH:mm'))
+        console.log 'dsfdsf', current_time.toDate()
         @set('time', current_time.toDate())
         @set('currentIndex', 0)
-
         focusedInput = @$().find('input')
         inputs = focusedInput.closest('.timetable-editor').find('input[type=text]')
         if inputs.index(focusedInput) == inputs.length - 1
@@ -56,6 +58,7 @@ App.TimeEditorComponent = Ember.Component.extend
   upperTimeBound: UPPER_TIME_BOUND
 
   lowerTimeBound: (->
+    console.log('low')
     timetable = @get('timetable')
     day = @get('day')
     if @get('flag') == 'from'
@@ -65,9 +68,10 @@ App.TimeEditorComponent = Ember.Component.extend
         moment(day.objectAt(day.indexOf(timetable) - 1).close_at).add(@get('granulation'), 'm').toDate()
     else#to
       moment(timetable.open_at).add(@get('granulation'), 'm').toDate()
-  ).property('time', 'pickTime', 'dropdownVisible')
+  ).property('time', 'pickTime', 'dropdownVisible', 'dropdownVisible')
 
   upperTimeBound: (->
+    console.log 'up'
     timetable = @get('timetable')
     day = @get('day')
     if @get('flag') == 'to'
@@ -78,7 +82,7 @@ App.TimeEditorComponent = Ember.Component.extend
     else#from
       moment(timetable.close_at).toDate()
 
-  ).property('time', 'pickTime', 'dropdownVisible')
+  ).property('time', 'pickTime', 'dropdownVisible', 'dropdownVisible')
 
   availableTimeValues: (->
     timeIntervals = []
@@ -86,19 +90,22 @@ App.TimeEditorComponent = Ember.Component.extend
     while today.isBefore(moment(@get('upperTimeBound')))
       timeIntervals.push(moment(today).format('HH:mm'))
       today = today.add(@get('granulation'), 'm')
+    if moment(@get('upperTimeBound')).minutes() == 59
+      timeIntervals.push(moment(@get('upperTimeBound')).format('HH:mm'))
     timeIntervals
   ).property('lowerTimeBound', 'upperTimeBound')
 
 
   suggestionList: (->
     timeInput = @get('timeInput')
-    self = this
+    console.log timeInput
+    console.log @get('availableTimeValues')
     @get('availableTimeValues')
     .filter (item, index, enumerable) ->
       item.indexOf(timeInput) != -1
-    .map (item, index) ->
+    .map (item, index) =>
       text: item
-      isActive: index == self.get('currentIndex')
+      isActive: index is @get('currentIndex')
   ).property('timeInput', 'availableTimeValues', 'currentIndex')
 
   #
@@ -140,5 +147,7 @@ App.TimeEditorComponent = Ember.Component.extend
       @set('currentIndex', @get('currentIndex') - 1)
 
   arrowDown: (event) ->
+    console.log @get('lowerTimeBound')
+    console.log @get('upperTimeBound')
     if @get('currentIndex') != @get('suggestionList').length - 1
       @set('currentIndex', @get('currentIndex') + 1)
