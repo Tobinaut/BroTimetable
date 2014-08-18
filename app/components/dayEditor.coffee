@@ -5,6 +5,7 @@ App.DayEditorComponent = Ember.Component.extend
   actions:
     deleteSpan: (timetable) ->
       @get('timetables').removeObject(timetable)
+
     addSpan: (day) ->
       today = @get('sortedTimetables').objectAt(day)
       open_at = moment(today.get('lastObject').close_at).add(this.get('granulation'), 'm')
