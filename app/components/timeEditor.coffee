@@ -30,7 +30,6 @@ App.TimeEditorComponent = Ember.Component.extend
 
     pickTime: (time) ->
       current_time = moment(time, 'HH:mm')
-
       if current_time.isValid()
         current_time = current_time.year(2000)
           .month(0)
@@ -41,6 +40,9 @@ App.TimeEditorComponent = Ember.Component.extend
       else
         @notifyPropertyChange('time')
 
+    onSuggestionListHover: (item) ->
+      @set 'currentIndex', item
+      true
 
     setDropdownVisible: ->
       @set('dropdownVisible', true)
@@ -53,7 +55,7 @@ App.TimeEditorComponent = Ember.Component.extend
         unless @get('isDestroyed')
           @set('dropdownVisible', false)
           @notifyPropertyChange('time')
-      , 80
+      , 400
   ###
   # Хитрое свойство для заполнения поля при изменении времени
   ###
@@ -120,7 +122,8 @@ App.TimeEditorComponent = Ember.Component.extend
     'flag',
     'granulation',
     'timetable.open_at',
-    'day.@each.open_at',    'day.@each.close_at'
+    'day.@each.open_at',
+    'day.@each.close_at'
   )
 
   ###
@@ -154,7 +157,7 @@ App.TimeEditorComponent = Ember.Component.extend
     result = @get('availableTimeValues')
     .filter (item, index, enumerable) =>
       item.indexOf(timeInput) != -1
-  ).property('timeInput', 'availableTimeValues', 'myProperty')
+  ).property('timeInput', 'availableTimeValues')
 
   suggestionList: (->
     currentIndex = @get('currentIndex')

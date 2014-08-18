@@ -2,5 +2,6 @@
 
   .suggestion-list class=dropdownVisible:shown
     each suggestion in suggestionList
-      .suggestion class=suggestion.isActive:selected click='pickTime suggestion.text'
-        = suggestion.text
+      .dummy  mouseMove='onSuggestionListHover _view.contentIndex'
+        .suggestion class=suggestion.isActive:selected click='pickTime suggestion.text'
+          = suggestion.text
