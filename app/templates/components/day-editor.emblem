@@ -1,4 +1,4 @@
-= input type="checkbox" checked=isWorking class="toggle"
+Ember.Checkbox checked=isWorking
   if isWorking
     each timetable in day
       ' с
