@@ -1,6 +1,3 @@
 ul: each day in sortedTimetables
   li
-    = input type="checkbox" checked=isCompleted class="toggle"
-    each timetable in day
-      = time-span-editor timetable=timetable day=day timetables=timetables granulation=granulation
-    button click='addSpan _view.contentIndex' Добавить
+    = day-editor day=day timetables=timetables granulation=granulation sortedTimetables=sortedTimetables index=_view.contentIndex

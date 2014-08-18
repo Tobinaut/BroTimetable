@@ -11,25 +11,6 @@ App.TimeEditorComponent = Ember.Component.extend
   classNames: ['time-editor-component']
 
   actions:
-    acceptChanges: ->
-      console.log @get('lowerTimeBound')
-      console.log @get('upperTimeBound')
-      if @get('suggestionList')[@get('currentIndex')] != undefined
-        value = @get('suggestionList')[@get('currentIndex')].text
-        current_time = moment(@get('suggestionList')[@get('currentIndex')].text, 'HH:mm')
-        current_time.year(2000)
-        current_time.month(0)
-        current_time.dayOfYear(1)
-        @set('timeInput', current_time.format('HH:mm'))
-        console.log 'dsfdsf', current_time.toDate()
-        @set('time', current_time.toDate())
-        @set('currentIndex', 0)
-        focusedInput = @$().find('input')
-        inputs = focusedInput.closest('.timetable-editor').find('input[type=text]')
-        if inputs.index(focusedInput) == inputs.length - 1
-          focusedInput.blur()
-        else
-          inputs.eq( inputs.index(focusedInput)+ 1 ).focus()
     switchFocus: ->
       focusedInput = @$().find('input')
       inputs = focusedInput
@@ -139,8 +120,7 @@ App.TimeEditorComponent = Ember.Component.extend
     'flag',
     'granulation',
     'timetable.open_at',
-    'day.@each.open_at',
-    'day.@each.close_at'
+    'day.@each.open_at',    'day.@each.close_at'
   )
 
   ###
@@ -224,8 +204,6 @@ App.TimeEditorComponent = Ember.Component.extend
       @set('currentIndex', @get('currentIndex') - 1)
 
   arrowDown: (event) ->
-    console.log @get('lowerTimeBound')
-    console.log @get('upperTimeBound')
     if @get('currentIndex') != @get('suggestionList').length - 1
       @set('currentIndex', @get('currentIndex') + 1)
 
