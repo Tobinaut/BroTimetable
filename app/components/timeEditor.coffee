@@ -134,7 +134,15 @@ App.TimeEditorComponent = Ember.Component.extend
       now = now.add(@get('granulation'), 'm')
 
     timeIntervals
-  ).property('lowerTimeBound', 'upperTimeBound')
+  ).property('lowerTimeBound', 'upperTimeBound'),
+
+  ##
+  #Добавление верхней границы в список подсказок
+  ##
+  upperBound: (->
+    if moment(@get('upperTimeBound')).minutes() == 59
+      @get('availableTimeValues').push(moment(UPPER_TIME_BOUND).format('HH:mm'))
+  ).observes('availableTimeValues').on('init'),
 
   ###
   # Список подсказок
@@ -146,7 +154,7 @@ App.TimeEditorComponent = Ember.Component.extend
     result = @get('availableTimeValues')
     .filter (item, index, enumerable) =>
       item.indexOf(timeInput) != -1
-  ).property('timeInput', 'availableTimeValues')
+  ).property('timeInput', 'availableTimeValues', 'myProperty')
 
   suggestionList: (->
     currentIndex = @get('currentIndex')
