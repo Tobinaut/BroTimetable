@@ -5,7 +5,7 @@ App.TimetableRaw = [
     "close_at": "2000-01-01T18:00:00Z",
     "day": 0,
     "date": null,
-    "is_working": true
+    "is_working": false
   },
   {
     "id": 79,

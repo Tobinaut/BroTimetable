@@ -1,13 +1,14 @@
 = input type="checkbox" checked=isWorking class="toggle"
-br
-if isWorking
-  each timetable in day
-    ' с
-    = time-editor time=timetable.open_at  day=day timetable=timetable flag='from' granulation=granulation
-    '  по
-    = time-editor time=timetable.close_at day=day timetable=timetable flag='to'   granulation=granulation
+  if isWorking
+    each timetable in day
+      ' с
+      = time-editor time=timetable.open_at  day=day timetable=timetable flag='from' granulation=granulation
+      '  по
+      = time-editor time=timetable.close_at day=day timetable=timetable flag='to'   granulation=granulation
 
-    if canBeDeleted
-      button click='deleteSpan timetable' Удалить
-    br
-  button click='addSpan index' Добавить
+      if canBeDeleted
+        button click='deleteSpan timetable' Удалить
+
+    button click='addSpan index' Добавить
+  else
+    | Не работаем

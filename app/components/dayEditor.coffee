@@ -24,13 +24,12 @@ App.DayEditorComponent = Ember.Component.extend
     @get('day.length') > 1;
   ).property(),
 
-  # isWorking: false,
+  isWorking: false,
 
-  isWorking: ((key, value)->
-    if value
-      console.log 'sdf'
-      # @get('day').forEach (item) =>
-        # item.is_working = value
+  isWorking: ((key, value) ->
+    if arguments.length > 1
+      @get('day').forEach (item) =>
+        item.set 'is_working', value
 
-    # @get('day').isEvery('is_working')
+    @get('day').isEvery('is_working')
   ).property('day.@each.is_working')
