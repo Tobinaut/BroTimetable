@@ -3,30 +3,43 @@ UPPER_TIME_BOUND.toDate()
 
 App.DayEditorComponent = Ember.Component.extend
   actions:
+    ###
+    # Удаление промежутка
+    ###
     deleteSpan: (timetable) ->
       @get('timetables').removeObject(timetable)
 
+    ###
+    # Добавление нового промежутка в конец
+    ###
     addSpan: (day) ->
-      today = @get('sortedTimetables').objectAt(day)
-      open_at = moment(today.get('lastObject').close_at).add(this.get('granulation'), 'm')
+      today = @get('grouped')
+        .objectAt(day)
+
+      open_at  = moment(today.get('lastObject.close_at'))
+        .add(@get('granulation'), 'm')
+
       close_at = UPPER_TIME_BOUND
-      newTimetable = Em.Object.create
-        open_at: open_at,
-        close_at: close_at,
-        day: day,
-        date: null,
-        is_working: true
-      if(moment(today.get('lastObject').close_at).isBefore(moment.parseZone(close_at)))
-        @get('timetables').pushObject(newTimetable)
+
+      newTimetable = Em.Object.create { open_at, close_at, day, date: null, is_working: true }
+      @get('timetables').pushObject(newTimetable)
+
+
+  groupedTimetables: null
+  groupedBinding: 'groupedTimetables.groupedContent'
 
   canBeAdded: (->
+    # TODO: сделать правильную проверку
     moment(@get('day.lastObject.close_at')).minutes() != 59
   ).property('day.lastObject.close_at')
 
   canBeDeleted: (->
     @get('day.length') > 1;
-  ).property()
+  ).property('day.length')
 
+  ###
+  # Переключатель работает/не работает целый день
+  ###
   isWorking: ((key, value) ->
     if arguments.length > 1
       @get('day').forEach (item) =>

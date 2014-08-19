@@ -1,3 +1,2 @@
-ul: each day in sortedTimetables
-  li
-    = day-editor day=day timetables=timetables granulation=granulation sortedTimetables=sortedTimetables index=_view.contentIndex
+each day in groupedTimetables.groupedContent
+  = day-editor day=day timetables=timetables granulation=granulation groupedTimetables=groupedTimetables index=_view.contentIndex
