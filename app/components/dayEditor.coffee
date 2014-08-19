@@ -19,13 +19,13 @@ App.DayEditorComponent = Ember.Component.extend
       if(moment(today.get('lastObject').close_at).isBefore(moment.parseZone(close_at)))
         @get('timetables').pushObject(newTimetable)
 
-  canBeDeleted: false
+  canBeAdded: (->
+    moment(@get('day.lastObject.close_at')).minutes() != 59
+  ).property('day.lastObject.close_at')
 
   canBeDeleted: (->
     @get('day.length') > 1;
-  ).property(),
-
-  isWorking: false,
+  ).property()
 
   isWorking: ((key, value) ->
     if arguments.length > 1

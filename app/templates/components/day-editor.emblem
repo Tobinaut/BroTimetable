@@ -8,7 +8,7 @@ Ember.Checkbox checked=isWorking
 
       if canBeDeleted
         button click='deleteSpan timetable' Удалить
-
-    button click='addSpan index' Добавить
+    if canBeAdded
+      button click='addSpan index' Добавить
   else
     | Не работаем
