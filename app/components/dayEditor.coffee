@@ -2,6 +2,8 @@ UPPER_TIME_BOUND = moment({y: 2000, M: 0, d: 1, h: 23, m: 59, s: 59, ms: 999})
 UPPER_TIME_BOUND.toDate()
 
 App.DayEditorComponent = Ember.Component.extend
+  classNames: ['day-editor-component']
+
   actions:
     ###
     # Удаление промежутка

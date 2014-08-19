@@ -1,7 +1,9 @@
-= input type="text" value=timeInput action="acceptReturn" focus-in="setDropdownVisible" focus-out="setDropdownUnVisible" size="7" arrow-up="arrowUp" arrow-down="arrowDown"
+= input type="text" value=timeInput action="acceptReturn" focus-in="onInputGotFocus" focus-out="onInputLostFocus" size="7" arrow-up="arrowUp" arrow-down="arrowDown"
 
   .suggestion-list class=dropdownVisible:shown
     each suggestion in suggestionList
-      .dummy  mouseMove='onSuggestionListHover _view.contentIndex'
-        .suggestion class=suggestion.isActive:selected click='pickTime suggestion.text'
+      .dummy mouseMove='onSuggestionListHover _view.contentIndex'
+        .suggestion class=suggestion.isActive:selected mouseDown='pickTime suggestion.text'
           = suggestion.text
+    else
+      .suggestion неверный формат

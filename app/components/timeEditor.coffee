@@ -14,7 +14,7 @@ App.TimeEditorComponent = Ember.Component.extend
     switchFocus: ->
       focusedInput = @$().find('input')
       inputs = focusedInput
-        .closest('.timetable-editor')
+        .closest('.timetable-editor-component')
         .find('input[type=text]')
 
       if inputs.index(focusedInput) == inputs.length - 1
@@ -26,7 +26,6 @@ App.TimeEditorComponent = Ember.Component.extend
       choice = @get('suggestionList').objectAt(@get('currentIndex'))
       @send('pickTime', choice?.text)
       @send('switchFocus')
-
 
     pickTime: (time) ->
       current_time = moment(time, 'HH:mm')
@@ -40,22 +39,21 @@ App.TimeEditorComponent = Ember.Component.extend
       else
         @notifyPropertyChange('time')
 
+      @$('input').blur()
+
     onSuggestionListHover: (item) ->
       @set 'currentIndex', item
-      true
 
-    setDropdownVisible: ->
+    onInputGotFocus: ->
       @set('dropdownVisible', true)
+      Em.run.next @, ->
+        @$('input').select()
 
-    setDropdownUnVisible: ->
-      ###
-      # TODO: очень-очень плохо
-      ###
-      setTimeout =>
-        unless @get('isDestroyed')
-          @set('dropdownVisible', false)
-          @notifyPropertyChange('time')
-      , 400
+    onInputLostFocus: ->
+      @set('dropdownVisible', false)
+      @notifyPropertyChange('time')
+
+
   ###
   # Хитрое свойство для заполнения поля при изменении времени
   ###

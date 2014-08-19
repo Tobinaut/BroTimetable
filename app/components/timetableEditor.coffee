@@ -5,7 +5,7 @@ App.TimetableEditorComponent = Ember.Component.extend
 
   granulation: 30 # minutes
 
-  classNames: ['timetable-editor']
+  classNames: ['timetable-editor-component']
 
   init: ->
     @_super(arguments...)

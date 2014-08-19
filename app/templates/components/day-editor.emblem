@@ -1,14 +1,14 @@
 Ember.Checkbox checked=isWorking
   if isWorking
     each timetable in day
-      ' с
-      = time-editor time=timetable.open_at  day=day timetable=timetable flag='from' granulation=granulation
-      '  по
-      = time-editor time=timetable.close_at day=day timetable=timetable flag='to'   granulation=granulation
+      .day-interval
+        = time-editor time=timetable.open_at  day=day timetable=timetable flag='from' granulation=granulation
+        '  до
+        = time-editor time=timetable.close_at day=day timetable=timetable flag='to'   granulation=granulation
 
-      if canBeDeleted
-        button click='deleteSpan timetable' Удалить
-    if canBeAdded
-      button click='addSpan index' Добавить
+        / if canBeDeleted
+        span.remove-button.ion-close-circled click='deleteSpan timetable' class=canBeDeleted:active
+
+    span.add-button.ion-ios7-plus-outline click='addSpan index' class=canBeAdded:active
   else
     | Не работаем
