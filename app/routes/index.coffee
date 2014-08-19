@@ -6,11 +6,6 @@ module.exports = App.IndexRoute = Ember.Route.extend
 
       Em.Object.create(obj)
 
-    # records =  Ember.ArrayProxy.create
-    #   content: Ember.A(objects)
-
-    records = objects
-
-    controller.set('records', records)
+    controller.set('records', objects)
 
 
